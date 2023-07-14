@@ -11,7 +11,7 @@ Route::post('/register', [UtilisateurController::class, 'register'])->name('regi
 
 Route::post('/login', [UtilisateurController::class, 'login'])->name('log');
 
-Route::put('/users/{id}/account', [UserController::class, 'updateAccountAmount']);
+Route::put('/users/{id}/account', [UtilisateurController::class, 'updateAccountAmount']);
 
 
 

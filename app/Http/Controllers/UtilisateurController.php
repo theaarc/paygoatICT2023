@@ -65,5 +65,6 @@ class UtilisateurController extends Controller
     
         return response()->json(['message' => 'Account amount updated successfully']);
     }
+    
 
 }
