@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Transaction;
+use App\Models\Product;
+
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,6 +13,19 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+
+
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -18,7 +34,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name','email','password',
+        'name','numero','email','password','solde',
     ];
 
     /**
@@ -39,4 +55,5 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
 }

@@ -1,24 +1,50 @@
-document.getElementById('deposit-form').addEventListener('submit', async (event) => {
+document.getElementById('external-form').addEventListener('submit', async (event) => {
     event.preventDefault();
   
-    const number = document.querySelector('input[name="from"]').value;
-    const amount = document.querySelector('input[name="amount"]').value;
-    const from = "237"+number;
-    const idu = document.querySelector('input[name="idu"]').value;
-  
+    const user_id = document.querySelector('input[name="user_id"]').value;
+    const client_name = document.querySelector('input[name="client_name"]').value;
+    const client_prof = document.querySelector('input[name="client_prof"]').value;
+    const prodID = document.querySelector('input[name="prodID"]').value;
+    const number = document.querySelector('input[name="number"]').value;
+
+    // Make an AJAX request to fetch the product details
+    fetch(`/products/${prodID}`)
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to retrieve product details.');
+        }
+    })
+    .then(product => {
+        // Product details received, perform further operations
+        const price = product.price;
+        // Use the price for further operations
+        console.log('Product Price:', price);
+        const csrfToken = document.head.querySelector('meta[name="csrf-token"]').content;
+        makeCampayRequest(csrfToken, user_id, client_name, client_prof, number, price, prodID);
+    })
+    .catch(error => {
+        console.error(error);
+        // Handle error scenario
+    });
+
+})
+
+async function makeCampayRequest(csrfToken, user_id,client_name,client_prof,number,price,prodID){
     const jsonData = {
-        amount: amount,
+        amount: price,
         currency: "XAF",
-        from: from,
+        from: "237"+number,
         description: "Test",
         external_reference: "",
         external_user: ""
     }
 
-        const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': 'Token 69691f9b74fc21d29de6860acb118ad564085040', // Add any other headers as needed
-        };
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token 69691f9b74fc21d29de6860acb118ad564085040', // Add any other headers as needed
+    };
 
     try {
       // Make the first POST request to Campay API to collect money
@@ -64,8 +90,7 @@ document.getElementById('deposit-form').addEventListener('submit', async (event)
                 clearInterval(intervalId);
 
                 // Make the third PUT request to your server to update the user's account amount
-                const csrfToken = document.head.querySelector('meta[name="csrf-token"]').content;
-                savetobdD(csrfToken, amount, idu, number);
+                savetobdD(csrfToken, user_id, client_name, client_prof, number, price, prodID);
               }
 
               counter++;
@@ -79,25 +104,24 @@ document.getElementById('deposit-form').addEventListener('submit', async (event)
     } catch (error) {
       console.error('Error:', error.message);
     }
-  });
+}
 
+  async function savetobdD(csrfToken, user_id, client_name, client_prof, number, price, prodID){
 
-  async function savetobdD(csrfToken, amount, idu, number){
-
-    const updateResponse = await fetch(`/users/${idu}/depot`, {
+    const updateResponse = await fetch(`/users/${user_id}/pay`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-TOKEN': csrfToken,
       },
-      body: JSON.stringify({amount:amount,number:number}),
+      body: JSON.stringify({amount:price, number:number, client_name:client_name, client_prof:client_prof, prodID:prodID}),
     });
             
     if (!updateResponse.ok) {
       throw new Error('Failed to update account amount');
     }
     else{
-      alert('Depot effectuer avec success');
+      alert('Payement effectuer avec success');
     }     
 
 }

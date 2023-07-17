@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 
 use App\Http\Controllers\UtilisateurController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ProductController;
 
 /*mes tests*/
 
@@ -11,7 +13,22 @@ Route::post('/register', [UtilisateurController::class, 'register'])->name('regi
 
 Route::post('/login', [UtilisateurController::class, 'login'])->name('log');
 
-Route::put('/users/{id}/account', [UtilisateurController::class, 'updateAccountAmount']);
+Route::put('/users/{id}/depot', [UtilisateurController::class, 'depotUser']);
+
+Route::put('/users/{id}/withdraw', [UtilisateurController::class, 'withDrawUser']);
+
+Route::put('/users/{id}/pay', [UtilisateurController::class, 'pay']);
+
+
+/*********************external pays api****************** */
+Route::get('/external-payment/{id}', [TransactionController::class, 'show'])->name('external-payment');
+Route::post('/process-external-payment', [TransactionController::class, 'process'])->name('process-external-payment');
+
+
+/***********************products********************* */
+Route::get('/products', [ProductController::class,'index'])->name('products');
+Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
 
 

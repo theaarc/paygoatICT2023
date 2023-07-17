@@ -49,11 +49,13 @@ class PostController extends Controller
     }*/
    public function modal()
    {
-    return view('modals');
+    $user = Auth::user();
+    return view('modals',compact('user'));
    }
 
    public function payview(){
-      return view('makepay');
+    $user = Auth::user();
+      return view('makepay',compact('user'));
    }
 
 
